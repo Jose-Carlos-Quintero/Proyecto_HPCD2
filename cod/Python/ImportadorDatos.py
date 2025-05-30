@@ -6,7 +6,7 @@ class ImportadorDatos:
     Clase para importar y transformar datos desde un archivo SPSS (.sav).
     """
 
-    def __init__(self, ruta_archivo):
+    def __init__(self, ruta_archivo: str):
         """
         Inicializa una instancia del importador con la ruta al archivo .sav.
 
@@ -47,7 +47,7 @@ class ImportadorDatos:
         return self.__ruta
 
     @ruta.setter
-    def ruta(self, nueva_ruta):
+    def ruta(self, nueva_ruta: str):
         """Asigna una nueva ruta y recarga los datos."""
         self.__ruta = nueva_ruta
         self.__datos, self.__etiquetas = pyreadstat.read_sav(self.__ruta)
@@ -71,7 +71,7 @@ class ImportadorDatos:
         print("\nPrimeras filas:")
         print(self.__datos.head())
 
-    def seleccionar_variables(self, lista_vars):
+    def seleccionar_variables(self, lista_vars: list):
         """
         Filtra el DataFrame dejando solo las variables indicadas.
 
@@ -93,3 +93,17 @@ class ImportadorDatos:
             if col in etiquetas:
                 self.__datos[col] = self.__datos[col].replace(etiquetas[col])
                 self.__datos[col] = self.__datos[col].astype("category")
+                
+    def eliminar_na_columnas(self, columnas = None):
+        """
+        Elimina las filas del DataFrame que tienen valores NA en al menos una de las columnas especificadas.
+    
+        Parámetros
+        ----------
+        columnas : list
+            Lista de nombres de columnas en las cuales se eliminarán filas con valores NA.
+        """
+        if columnas is None:
+            columnas = self.__datos.columns
+        self.__datos = self.__datos.dropna(subset=columnas)
+
