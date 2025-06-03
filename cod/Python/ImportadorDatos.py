@@ -106,4 +106,16 @@ class ImportadorDatos:
         if columnas is None:
             columnas = self.__datos.columns
         self.__datos = self.__datos.dropna(subset=columnas)
+        
+    def contar_na_por_columna(self):
+        """
+        Retorna un Series con la cantidad de valores NA por cada columna del DataFrame.
+
+        Retorna
+        -------
+        pd.Series
+            Serie con el nombre de la columna como índice y la cantidad de NA como valor.
+        """
+        return self.__datos.isna().sum()
+
 
