@@ -296,5 +296,31 @@ class ImportadorDatos:
         reporte.show_html(nombre_archivo)
     
         return nombre_archivo
+    
+    def codificar_binaria(self, columna: str, positivo: str, negativo: str):
+        """
+        Codifica una variable binaria reemplazando los valores por 1 (positivo) y 0 (negativo).
+    
+        Parámetros
+        ----------
+        columna : str
+            Nombre de la columna binaria a codificar.
+        positivo : str
+            Valor que debe transformarse a 1.
+        negativo : str
+            Valor que debe transformarse a 0.
+    
+        Retorna
+        -------
+        pd.DataFrame
+            DataFrame con la variable binaria codificada como 0/1.
+        """
+        
+        self.__datos[columna] = self.__datos[columna].replace({
+            positivo: 1,
+            negativo: 0
+        }).astype("int")
+    
+        return self.__datos
 
 
