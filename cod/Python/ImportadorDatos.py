@@ -207,5 +207,71 @@ class ImportadorDatos:
             Serie con el nombre de la columna como índice y la cantidad de NA como valor.
         """
         return self.__datos.isna().sum()
+    
+    def refactorizar_variable(self, columna: str, recodificacion: dict):
+        """
+        Refactoriza una variable categórica según un diccionario de recodificación.
+    
+        Parámetros
+        ----------
+        columna : str
+            Nombre de la variable a refactorizar.
+        recodificacion : dict
+            Diccionario con los valores a transformar. Formato: {valor_actual: nuevo_valor}
+            
+        Retorna
+        -------
+        pd.DataFrame
+            Dataframe con las variables especificadas refactorizadas
+        """
+        if columna not in self.__datos.columns:
+            raise ValueError(f"La columna '{columna}' no existe en los datos.")
+    
+        self.__datos[columna] = self.__datos[columna].replace(recodificacion)
+        self.__datos[columna] = self.__datos[columna].astype("category")
+
+        return self.__datos
+
+    def eliminar_columnas(self, columnas: list):
+        """
+        Elimina del DataFrame las columnas especificadas.
+
+        Parámetros
+        ----------
+        columnas : list
+            Lista de nombres de columnas que se desea eliminar.
+
+        Retorna
+        -------
+        pd.DataFrame
+            DataFrame actualizado sin las columnas eliminadas.
+        """
+        self.__datos = self.__datos.drop(columns = columnas, errors = "ignore")
+        return self.__datos
+
+    def resumen_categoria(self, variable: str):
+        """
+        Retorna una tabla con la frecuencia absoluta y relativa de una variable categórica.
+
+        Parámetros
+        ----------
+        variable : str
+            Nombre de la variable categórica que se desea resumir.
+
+        Retorna
+        -------
+        resumen: pd.DataFrame
+            Tabla con las categorías, frecuencias absolutas y relativas.
+        """
+        conteo = self.__datos[variable].value_counts(dropna=False)
+        porcentaje = self.__datos[variable].value_counts(normalize=True, dropna=False).round(4)
+
+        resumen = pd.DataFrame({
+            "Categoria": conteo.index,
+            "Frecuencia absoluta": conteo.values,
+            "Frecuencia relativa": porcentaje.values
+        })
+
+        return resumen
 
 
