@@ -1,7 +1,7 @@
 import numpy as np
 import pandas as pd
 from scipy.stats import pointbiserialr, f_oneway
-from analizador_data_frame.analizador_df import AnalizadorDataFrame
+from AnalizadorDataFrame import AnalizadorDataFrame
 
 class AnalizadorVariableObjetivo:
     """Clase para análisis de relaciones entre variables y una variable objetivo binaria.

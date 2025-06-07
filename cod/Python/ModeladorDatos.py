@@ -21,7 +21,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import OneHotEncoder, StandardScaler
 
-from analizador_data_frame.analizador_df_binario import AnalizadorVariableObjetivo
+from AnalizadorVariableObjetivo import AnalizadorVariableObjetivo
 # Eliminar evaluación de clustering
 # Eliminar jerárquico
 
