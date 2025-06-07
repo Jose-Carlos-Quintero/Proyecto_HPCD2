@@ -274,4 +274,27 @@ class ImportadorDatos:
 
         return resumen
 
+    def generar_eda_html(self, variable_objetivo: str, nombre_archivo: str = "EDA.html"):
+        """
+        Genera un informe EDA en formato HTML utilizando Sweetviz.
+    
+        Parámetros
+        ----------
+        variable_objetivo : str
+            Nombre de la variable objetivo a analizar.
+        nombre_archivo : str
+            Nombre del archivo HTML a generar (default: 'EDA.html').
+    
+        Retorna
+        -------
+        nombre_archivo: str
+            Ruta del archivo HTML generado.
+        """
+
+        config = sviz.FeatureConfig(force_num=[variable_objetivo])
+        reporte = sviz.analyze(self.__datos, target_feat=variable_objetivo, feat_cfg=config)
+        reporte.show_html(nombre_archivo)
+    
+        return nombre_archivo
+
 
