@@ -1,3 +1,4 @@
+import sweetviz as sviz
 import pandas as pd
 import pyreadstat
 

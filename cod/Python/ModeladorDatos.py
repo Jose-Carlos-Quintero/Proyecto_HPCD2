@@ -63,8 +63,10 @@ class ModeladorDatos():
         self.__analizador = AnalizadorVariableObjetivo(pd.concat([self.__X_train, self.__y_train], axis=1), 
                                                        var_objetivo)
         self.__procesador = self.__configurar_preprocesador(remainder)
-        self.__X_escalado = self.__numerical_transformer.fit_transform(self.__X[self.__analizador.x.clasificacion_variables['Cuantitativas']])
-        #??? considerar si uso __X o __X_train, dependiendo de qué quiero en el supervisado
+        self.__X_escalado = self.__numerical_transformer.fit_transform(
+            self.__X[self.__analizador.x.clasificacion_variables['Cuantitativas']]
+            )
+
 
     #Métodos internos
     def __configurar_preprocesador(self, remainder: str) -> ColumnTransformer:
@@ -160,20 +162,18 @@ class ModeladorDatos():
         return pd.DataFrame(results)
 
 
-    def importancia_variables_modelos(self):
+    def importancia_variables_modelos(self, nombre_modelo: str, modelo):
         '''
         Calcula la importancia de variables para distintos modelos.
 
         Parámetros:
         ------------
-        procesador (sklearn.Pipeline o ColumnTransformer): Preprocesador aplicado antes del clasificador.
-        X_train (pd.DataFrame): Variables independientes de entrenamiento.
-        X_test (pd.DataFrame): Variables independientes de prueba.
-        y_train (pd.Series): Variable dependiente de entrenamiento.
-        y_test (pd.Series): Variable dependiente de prueba.
-        feature_names (list): Lista de nombres de las variables después del preprocesamiento.
-
-        Returns:
+        nombre_modelo: str
+            Nombre del modelo al que se le quiere estimar la importancia de las variables
+        modelo: sklearn.pipeline.Pipeline
+            modelo al que se le quiere estimar la importancia de las variables
+        
+        Retorna:
         --------
         dict
             Diccionario con nombre del modelo como clave y DataFrame de importancias como valor.
@@ -181,41 +181,37 @@ class ModeladorDatos():
 
         importancias = {}
 
-        for name, classifier in self.__modelos.items():
-            print(f"Evaluando importancia para {name}...")
+        print(f"Evaluando importancia para {nombre_modelo}...")
+        
+        model = modelo
+        model.fit(self.__X_train, self.__y_train)
+        feature_names = model.named_steps['preprocessor'].get_feature_names_out() #??? podría ser causante de error
+        try:
+            if hasattr(modelo.named_steps['classifier'], 'feature_importances_'):
+                importancias[nombre_modelo] = pd.DataFrame({
+                    'Variable': feature_names,
+                    'Importancia': model.named_steps['classifier'].feature_importances_
+                }).sort_values(by='Importancia', ascending=False)
 
-            model = Pipeline(steps=[
-                ('preprocessor', self.__procesador),
-                ('classifier', classifier)
-            ])
-            model.fit(self.__X_train, self.__y_train)
-            feature_names = model.named_steps['preprocessor'].get_feature_names_out() #??? podría ser causante de error
-            try:
-                if hasattr(classifier, 'feature_importances_'):
-                    importancias[name] = pd.DataFrame({
-                        'Variable': feature_names,
-                        'Importancia': model.named_steps['classifier'].feature_importances_
-                    }).sort_values(by='Importancia', ascending=False)
+            elif hasattr(modelo.named_steps['classifier'], 'coef_'):
+                coef = model.named_steps['classifier'].coef_
+                if coef.ndim == 2:
+                    coef = coef[0]
+                importancias[nombre_modelo] = pd.DataFrame({
+                    'Variable': feature_names,
+                    'Importancia': coef
+                }).sort_values(by='Importancia', key=abs, ascending=False)
 
-                elif hasattr(classifier, 'coef_'):
-                    coef = model.named_steps['classifier'].coef_
-                    if coef.ndim == 2:
-                        coef = coef[0]
-                    importancias[name] = pd.DataFrame({
-                        'Variable': feature_names,
-                        'Importancia': coef
-                    }).sort_values(by='Importancia', key=abs, ascending=False)
+            else:
+                print(f"Usando Permutation Importance para {nombre_modelo}...")
+                r = permutation_importance(model, self.__X_test, self.__y_test, n_repeats=10, random_state=42, n_jobs=-1)
+                importancias[nombre_modelo] = pd.DataFrame({
+                    'Variable': feature_names,
+                    'Importancia': r.importances_mean
+                }).sort_values(by='Importancia', ascending=False)
 
-                else:
-                    print(f"Usando Permutation Importance para {name}...")
-                    r = permutation_importance(model, self.__X_test, self.__y_test, n_repeats=10, random_state=42, n_jobs=-1)
-                    importancias[name] = pd.DataFrame({
-                        'Variable': feature_names,
-                        'Importancia': r.importances_mean
-                    }).sort_values(by='Importancia', ascending=False)
-
-            except Exception as e:
-                print(f"No se pudo calcular la importancia para {name}: {e}")
+        except Exception as e:
+            print(f"No se pudo calcular la importancia para {nombre_modelo}: {e}")
 
         return importancias
 
@@ -384,3 +380,16 @@ class ModeladorDatos():
         self.__X_escalado = self.__numerical_transformer.fit_transform(self.__X)
         self.__analizador = AnalizadorVariableObjetivo(self.__X_train, self.__var_objetivo)
         self.__procesador = self.__configurar_preprocesador(remainder)
+        
+    def __str__(self):
+        """Representación legible del objeto ModeladorDatos."""
+        info = [
+            "ModeladorDatos resumen:",
+            f"- Número de observaciones (total): {len(self.__X)}",
+            f"- Variables predictoras: {list(self.__X.columns)}",
+            f"- Variable objetivo: {self.__Y.name}",
+            f"- Tamaño de entrenamiento: {len(self.__X_train)}",
+            f"- Tamaño de prueba: {len(self.__X_test)}",
+            f"- Modelos disponibles: {list(self.__modelos.keys())}"
+        ]
+        return "\n".join(info)
