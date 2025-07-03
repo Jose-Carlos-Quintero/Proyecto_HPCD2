@@ -1,4 +1,26 @@
-.Rproj.user
+# Archivos de R
 .Rhistory
 .RData
+.Rproj.user/
 .Ruserdata
+
+# Archivos temporales de RStudio
+*.Rproj
+
+# Archivos de Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.ipynb_checkpoints/
+
+# Archivos del sistema operativo
+.DS_Store
+Thumbs.db
+
+# Configuraciones personales
+.env
+
+.quarto/
+
+/.quarto/
