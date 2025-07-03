@@ -1,0 +1,172 @@
+---
+title: "Resumen de resultados"
+format:
+  html:
+    theme: darkly
+    number-sections: true
+    embed-resources: true
+---
+
+```{r}
+#| label: "setup"
+#| include: false
+knitr::opts_chunk$set(cache = TRUE)
+```
+
+
+```{r}
+#| echo: false
+#| warning: false
+#| results: "hide"
+#| label: "reticulate"
+
+library(reticulate)
+# verificar que todos los paquetes de python esten cargados en R
+# py_module_available("catboost")
+# py_module_available("sweetviz")
+# py_module_available("optuna")
+# py_module_available("lightgbm")
+# py_module_available("sklearn")
+# py_module_available("xgboost")
+# py_module_available("pyreadstat")
+```
+
+# Carga de módulos
+```{python}
+#| echo: false
+#| label: "ajustar lo del path"
+#| dependson: "reticulate"
+import sys
+sys.path.append("cod/Python")
+```
+
+```{python}
+#| label: "carga de librerias"
+#| dependson: "ajustar lo del path"
+# --- Librerías estándar ---
+import os  # Rutas de los archivos
+
+# --- Librerías científicas y de análisis ---
+import matplotlib.pyplot as plt # Gráficos
+import numpy as np  # Funciones matemáticas
+import pandas as pd  # Manejo de dataframes
+import sweetviz as sviz # EDA
+
+# --- Modelos de clasificación ---
+from catboost import CatBoostClassifier
+from lightgbm import LGBMClassifier
+from sklearn.discriminant_analysis import LinearDiscriminantAnalysis, QuadraticDiscriminantAnalysis
+from sklearn.ensemble import (AdaBoostClassifier, BaggingClassifier, 
+                              ExtraTreesClassifier, GradientBoostingClassifier, 
+                              RandomForestClassifier)
+from sklearn.linear_model import LogisticRegression
+from sklearn.naive_bayes import GaussianNB
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.neural_network import MLPClassifier
+from sklearn.svm import SVC
+from sklearn.tree import DecisionTreeClassifier
+from xgboost import XGBClassifier
+
+# --- Metricas y evaluación --- 
+from sklearn.metrics import (
+    accuracy_score, precision_score, f1_score, recall_score
+)
+from sklearn.model_selection import cross_val_score, train_test_split
+from sklearn.pipeline import Pipeline
+
+# --- Optimizador ---
+import optuna
+
+# --- Elaboración propia ---
+from ModeladorDatos import ModeladorDatos
+from ImportadorDatos import ImportadorDatos
+from OptimizadorExtraTreesOptuna import OptimizadorExtraTreesOptuna
+```
+# Lectura de datos
+
+Note que la limpieza y transformación de los datos se efectuó en el script "main_enaho.py"
+
+```{python}
+#| label: "lectura de la base de datos"
+ruta_actual = os.getcwd()
+ruta_datos = os.path.join(ruta_actual, 'data/base.csv') 
+ruta_normalizada = os.path.normpath(ruta_datos) 
+base = pd.read_csv(ruta_normalizada)
+```
+```{python}
+base.head()
+```
+# Evaluacion de los modelos
+```{python}
+#| label: "creacion del objeto modelador"
+models = {
+    "LogisticRegression": LogisticRegression(),
+    "DecisionTree": DecisionTreeClassifier(),
+    "SVM": SVC(probability = True),
+    "RandomForest": RandomForestClassifier(),
+    "XGBoost": XGBClassifier(),
+    "KNN": KNeighborsClassifier(),
+    "NeuralNetwork": MLPClassifier(),
+    "LDA": LinearDiscriminantAnalysis(),
+    "CatBoost": CatBoostClassifier(),
+    "LightGBM": LGBMClassifier(),
+    "AdaBoost": AdaBoostClassifier(),
+    "GradientBoosting": GradientBoostingClassifier(),
+    "NaiveBayes": GaussianNB(),
+    "QDA": QuadraticDiscriminantAnalysis(),
+    "Bagging": BaggingClassifier(base_estimator=DecisionTreeClassifier()),
+    "ExtraTrees": ExtraTreesClassifier()
+}
+modelador = ModeladorDatos(df = base, var_objetivo = 'V21', modelos = models)
+```
+```{python}
+#| label: "evaluacion de modelos"
+#| results: "hide"
+results_df = modelador.evaluar_modelos()
+```
+
+## Resultados:
+
+```{python}
+#| label: "impresion de resultados"
+print(results_df.loc[:,["Model", "Precision", "Recall", "F1 Score"]])
+```
+Se considera al modelo ExtraTrees como el más óptimo, dado a su alto score tanto en precisión como en recall, por lo que se va a utilizar para la optimización de parámetros.
+
+# Optimización de parámetros
+
+```{python}
+#| label: "optimizador 1"
+#| dependson: ["carga de librerias", "lectura de la base de datos"]
+optimizador = OptimizadorExtraTreesOptuna(base, "V21", 100)
+```
+```{python}
+#| label: "optimizador 2"
+#| dependson: "optimizador 1"
+optimizador.optimizar()
+```
+```{python}
+#| label: "optimizador 3"
+#| dependson: "optimizador 2"
+modelo_optimizado = optimizador.entrenar_modelo_final()
+modelo_optimizado
+```
+```{python}
+#| label: "optimizador 4"
+#| dependson: "optimizador 3"
+optimizador.evaluar_modelo_final()
+```
+
+# Importancia de las variables
+
+```{python}
+#| label: "importancias de las variables"
+#| dependson: "optimizador 3"
+importancias = modelador.importancia_variables_modelos("ExtraTrees", modelo_optimizado)
+
+importancias["ExtraTrees"].iloc[1:30]
+```
+
+
+
+

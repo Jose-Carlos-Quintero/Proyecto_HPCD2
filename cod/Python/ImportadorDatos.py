@@ -264,8 +264,8 @@ class ImportadorDatos:
         resumen: pd.DataFrame
             Tabla con las categorías, frecuencias absolutas y relativas.
         """
-        conteo = self.__datos[variable].value_counts(dropna=False)
-        porcentaje = self.__datos[variable].value_counts(normalize=True, dropna=False).round(4)
+        conteo = self.__datos[variable].value_counts(dropna = False)
+        porcentaje = self.__datos[variable].value_counts(normalize = True, dropna = False).round(4)
 
         resumen = pd.DataFrame({
             "Categoria": conteo.index,
@@ -292,8 +292,8 @@ class ImportadorDatos:
             Ruta del archivo HTML generado.
         """
 
-        config = sviz.FeatureConfig(force_num=[variable_objetivo])
-        reporte = sviz.analyze(self.__datos, target_feat=variable_objetivo, feat_cfg=config)
+        config = sviz.FeatureConfig(force_num = [variable_objetivo])
+        reporte = sviz.analyze(self.__datos, target_feat = variable_objetivo, feat_cfg = config)
         reporte.show_html(nombre_archivo)
     
         return nombre_archivo
@@ -323,5 +323,20 @@ class ImportadorDatos:
         }).astype("int")
     
         return self.__datos
+      
+    def generar_csv(self):
+        """método para guardar la base de datos en formato csv
+        Parámetros
+        ----------
+        None
+        
+        Retorna
+        -------
+        pd.DataFrame
+            DataFrame con los datos actuales
+        """
+        self.__datos.to_csv("../../data/base.csv", index = False)
+        return self.__datos
+
 
 

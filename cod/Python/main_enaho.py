@@ -2,7 +2,7 @@
 
 from ImportadorDatos import ImportadorDatos
 
-enaho = ImportadorDatos("../data/enaho_2024.sav")
+enaho = ImportadorDatos("../../data/enaho_2024.sav")
 
 # Se seleccionan las variables demográficas y del hogar de la base de datos que, a simple vista, podrían tener sentido en el modelo
 
@@ -24,7 +24,7 @@ enaho.factorizar_todo()
 enaho.contar_na_por_columna()
 
 # Se seleccionan las variables con menor cantidad de datos nulos y las que se considera que podría tener importancia
-enaho.eliminar_columnas(["V18A1", "V18F1", "V18G1", "V18Q1", "V18I1", "V18J1", "V18K1", "V18L1", "V18L2", "V18M1", "V19B1", "V19B2", "V19B3", "V19B4", ])
+enaho.eliminar_columnas(["V18F1", "V18G1", "V18Q1", "V18I1", "V18J1", "V18K1", "V18L1", "V18L2", "V18M1", "V19B1", "V19B2", "V19B3", "V19B4", ])
 
 # Se eliminan los valores nulos
 enaho.eliminar_na_columnas()
@@ -40,12 +40,7 @@ enaho.refactorizar_variable("V1", {
     "Otro": "Otra"})
 
 enaho.resumen_categoria("V2A")
-enaho.refactorizar_variable("V2A", {
-    "Propia totalmente pagada": "Propiedad",
-    "Propia pagando a plazos": "Propiedad",
-    "Alquilada": "Alquiler o cesión",
-    "Otra tenencia (cedida, prestada)": "Alquiler o cesión",
-    "En precario": "Tenencia precaria"})
+enaho.eliminar_columnas("V2A") #no tiene sentido incluirla, muy obvio
 
 enaho.resumen_categoria("V3")
 enaho.refactorizar_variable("V3", {
@@ -56,12 +51,7 @@ enaho.refactorizar_variable("V3", {
     "Otro": "Otro"})
 
 enaho.resumen_categoria("V4")
-enaho.refactorizar_variable("V4", {
-    "Entrepiso": "Otro",
-    "Fibrocemento": "Otro",
-    "Material de desecho": "Otro",
-    "Fibras naturales (bambú, caña, chonta)": "Otro",
-    "Otro": "Otro"})
+enaho.eliminar_columnas("V4")
 
 enaho.resumen_categoria("V6")
 enaho.refactorizar_variable("V6", {
@@ -69,6 +59,12 @@ enaho.refactorizar_variable("V6", {
     "No tiene (piso de tierra)": "Otro",
     "Otro": "Otro",
     "Material natural (bambú, caña, chonta)": "Otro"})
+    
+enaho.eliminar_columnas("V6A") #Variable desbalanceada
+
+enaho.eliminar_columnas("V7A") #Variables se pueden resumir con EFI
+enaho.eliminar_columnas("V7B")
+enaho.eliminar_columnas("V7C")
 
 enaho.resumen_categoria("V8")
 enaho.refactorizar_variable("V8", {
@@ -82,11 +78,7 @@ enaho.refactorizar_variable("V8", {
 
 enaho.eliminar_columnas("HacApo") # Variable muy desbalanceada
 
-enaho.resumen_categoria("V11")
-enaho.refactorizar_variable("V11", {
-    "Tubería fuera de la vivienda pero dentro del lote": "Otra ubicación",
-    "No tiene por tubería": "Otra ubicación",
-    "Tubería fuera del lote o edificio": "Otra ubicación"})
+enaho.eliminar_columnas("V11") #Variable desbalanceada
 
 enaho.resumen_categoria("V12")
 enaho.refactorizar_variable("V12", {
@@ -96,12 +88,7 @@ enaho.refactorizar_variable("V12", {
     "Lluvia u otro": "Otro"})
 
 enaho.resumen_categoria("V13A")
-enaho.refactorizar_variable("V13A", {
-    "Conectado a tanque séptico con tratamiento (fosa filtro, biodigestor, etc.)": "Otro",
-    "De hueco, de pozo negro o letrina": "Otro",
-    "Otro sistema": "Otro",
-    "No tiene": "Otro"
-})
+enaho.eliminar_columnas("V13A")
 
 enaho.eliminar_columnas("V13B") # Variable muy desbalanceada
 enaho.eliminar_columnas("V14A") # Variable muy desbalanceada
@@ -137,10 +124,17 @@ enaho.refactorizar_variable("V17A", {
     "La botan en lote baldío": "Otro método",
     "Otro": "Otro método"
 })
-
+enaho.eliminar_columnas("V17A") #Variables de importancia menor
+enaho.eliminar_columnas("V17B1")
+enaho.eliminar_columnas("V17B2")
+enaho.eliminar_columnas("V17B3")
+enaho.eliminar_columnas("V17B4")
+enaho.eliminar_columnas("V17B5")
 enaho.eliminar_columnas("V17B6") # Variable muy desbalanceada
 
 enaho.eliminar_columnas("V18A") # Variable muy desbalanceada
+enaho.eliminar_columnas("V18C") # Variable muy desbalanceada
+enaho.eliminar_columnas("V18D") # Variable muy desbalanceada
 
 enaho.eliminar_columnas("V18H") # Variable muy desbalanceada y obsoleta
 
