@@ -105,24 +105,24 @@ class OptimizadorExtraTreesOptuna:
         def objetivo(trial):
             try:
                 n_estimators = trial.suggest_int("n_estimators", 100, 500)
-                max_depth = trial.suggest_int("max_depth", 5, 40)
+                # max_depth = trial.suggest_int("max_depth", 5, 40)
                 min_samples_split = trial.suggest_int("min_samples_split", 2, 50)
                 min_samples_leaf = trial.suggest_int("min_samples_leaf", 1, 20)
-                max_features = trial.suggest_float("max_features", 0.3, 0.99)
-                max_leaf_nodes = trial.suggest_int("max_leaf_nodes", 20, 300)
+                max_features = trial.suggest_categorical("max_features", ['sqrt', 'log2', 0.3, 0.5, 0.8])
+                # max_leaf_nodes = trial.suggest_int("max_leaf_nodes", 20, 300)
 
-                pipeline = Pipeline(steps=[
+                pipeline = Pipeline(steps = [
                     ('preprocessor', self.__modelador.procesador),
                     ('classifier', ExtraTreesClassifier(
-                        n_estimators=n_estimators,
-                        max_depth=max_depth,
-                        min_samples_split=min_samples_split,
-                        min_samples_leaf=min_samples_leaf,
-                        max_features=max_features,
-                        max_leaf_nodes=max_leaf_nodes,
-                        bootstrap=False,
-                        random_state=42,
-                        n_jobs=-1
+                        n_estimators = n_estimators,
+                        # max_depth = max_depth,
+                        min_samples_split = min_samples_split,
+                        min_samples_leaf = min_samples_leaf,
+                        max_features = max_features,
+                        # max_leaf_nodes = max_leaf_nodes,
+                        bootstrap = False,
+                        random_state = 42,
+                        n_jobs = -1
                     ))
                 ])
 
@@ -131,7 +131,7 @@ class OptimizadorExtraTreesOptuna:
                     self.__modelador.X_train,
                     self.__modelador.y_train,
                     cv=3,
-                    scoring='f1_macro',
+                    scoring='f1',
                     n_jobs=-1
                 ).mean()
 
@@ -166,11 +166,11 @@ class OptimizadorExtraTreesOptuna:
             ('preprocessor', self.__modelador.procesador),
             ('classifier', ExtraTreesClassifier(
                 n_estimators=best_params['n_estimators'],
-                max_depth=best_params['max_depth'],
+                # max_depth=best_params['max_depth'],
                 min_samples_split=best_params['min_samples_split'],
                 min_samples_leaf=best_params['min_samples_leaf'],
                 max_features=best_params['max_features'],
-                max_leaf_nodes=best_params['max_leaf_nodes'],
+                # max_leaf_nodes=best_params['max_leaf_nodes'],
                 random_state = 42,
                 n_jobs = -1
             ))
