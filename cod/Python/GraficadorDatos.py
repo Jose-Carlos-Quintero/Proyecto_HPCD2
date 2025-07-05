@@ -6,6 +6,7 @@ class GraficadorDatos:
         self.df = df.copy()
 
     def grafico_barras(self, columna, titulo=None):
+      
         # Calcular frecuencia relativa de bono por categoría
         df_agg = self.df.groupby(columna).agg(
             total=('V21', 'count'),
