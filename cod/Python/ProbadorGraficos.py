@@ -5,4 +5,5 @@ base=pd.read_csv("~/Library/CloudStorage/OneDrive-UniversidaddeCostaRica/EMat/CA
 vis = GraficadorDatos(base)
 vis.graficar_todas()
 
-vis.grafico_barras('V15')
+vis.grafico_frecuencia_con_bono('CondMig')
+vis.grafico_frecuencia_con_bono('V3')

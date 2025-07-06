@@ -5,46 +5,67 @@ class GraficadorDatos:
     def __init__(self, df):
         self.df = df.copy()
 
-    def grafico_barras(self, columna, titulo=None):
-      
-        # Calcular frecuencia relativa de bono por categoría
-        df_agg = self.df.groupby(columna).agg(
-            total=('V21', 'count'),
-            con_bono=('V21', lambda x: (x == 1).sum())
+    def grafico_frecuencia_con_bono(self, columna, titulo=None):
+        df = self.df.copy()
+        df['V21'] = df['V21'].astype(str)
+    
+        # Total de observaciones
+        total = len(df)
+    
+        # % de personas en cada categoría respecto al total (longitud de la barra)
+        freq_relativa = df[columna].value_counts(normalize=True).sort_index() * 100
+    
+        # % con bono (V21=1) dentro de cada categoría (etiqueta a mostrar)
+        bono_por_categoria = (
+            df[df['V21'] == "1"]
+            .groupby(columna)
+            .size()
+            .div(df.groupby(columna).size())
+            .fillna(0)
+            .sort_index() * 100
         )
-        df_agg['porcentaje_bono'] = (df_agg['con_bono'] / df_agg['total']) * 100
-        df_agg = df_agg.reset_index().sort_values(by='total', ascending=False)
     
         # Plot
         plt.figure(figsize=(8, 5))
-        ax = sns.countplot(data=self.df, x=columna, order=df_agg[columna], palette='viridis')
-        plt.xticks(rotation=45)
-        plt.title(titulo or f"Distribución de {columna} con % de bono (V21)")
+        sns.barplot(x=freq_relativa.values, y=freq_relativa.index, palette='viridis')
+        for i, (cat, v) in enumerate(bono_por_categoria.items()):
+            plt.text(freq_relativa[cat] + 0.5, i, f"{v:.1f}%", va='center')
     
-        # Anotar porcentajes arriba de cada barra
-        for bar, pct in zip(ax.patches, df_agg['porcentaje_bono']):
-            height = bar.get_height()
-            ax.annotate(f"{pct:.1f}%", (bar.get_x() + bar.get_width()/2, height),
-                        ha='center', va='bottom', fontsize=10, color='black')
-    
+        plt.title(titulo or f"Distribución de {columna} y % con bono (V21)")
+        plt.xlabel("Porcentaje del total")
+        plt.ylabel(columna)
+        plt.xlim(0, 100)
         plt.tight_layout()
         plt.show()
 
     def grafico_caja_ingreso(self, variable_categorica):
+        df_filtrado = self.df.copy()
+    
+        # Calcular los cuartiles y IQR por categoría
+        def quitar_outliers(grupo):
+            q1 = grupo['ithb'].quantile(0.25)
+            q3 = grupo['ithb'].quantile(0.75)
+            iqr = q3 - q1
+            filtro = (grupo['ithb'] >= q1 - 1.5 * iqr) & (grupo['ithb'] <= q3 + 1.5 * iqr)
+            return grupo[filtro]
+    
+        df_filtrado = df_filtrado.groupby(variable_categorica, group_keys=False).apply(quitar_outliers)
+    
+        # Graficar sin valores extremos
         plt.figure(figsize=(8, 5))
-        sns.boxplot(data=self.df, x=variable_categorica, y='ithb', palette='Set2')
+        sns.boxplot(data=df_filtrado, x=variable_categorica, y='ithb', palette='Set2')
         plt.xticks(rotation=45)
-        plt.title(f"Ingreso por {variable_categorica}")
+        plt.title(f"Ingreso por {variable_categorica} (sin outliers)")
         plt.tight_layout()
         plt.show()
 
     def graficar_todas(self):
-        self.grafico_barras("ZONA", "Distribución por Zona")
-        self.grafico_barras("REGION", "Distribución por Región")
-        self.grafico_barras("CondMig", "Condición Migrante")
-        self.grafico_barras("V3", "Tipo de Pared")
-        self.grafico_barras("V15", "Fuente de Electricidad")
-        self.grafico_barras("V8", "Categoría de V8")
+        self.grafico_frecuencia_con_bono("ZONA", "Distribución por Zona")
+        self.grafico_frecuencia_con_bono("REGION", "Distribución por Región")
+        self.grafico_frecuencia_con_bono("CondMig", "Condición Migrante")
+        self.grafico_frecuencia_con_bono("V3", "Tipo de Pared")
+        self.grafico_frecuencia_con_bono("V15", "Fuente de Electricidad")
+        self.grafico_frecuencia_con_bono("V8", "Cantidad de cuartos para dormir de la vivienda")
         self.grafico_caja_ingreso("CondMig")
         self.grafico_caja_ingreso("REGION")
         self.grafico_caja_ingreso("ZONA")
