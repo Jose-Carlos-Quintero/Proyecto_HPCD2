@@ -8,13 +8,6 @@ format:
 ---
 
 ```{r}
-#| label: "setup"
-#| include: false
-knitr::opts_chunk$set(cache = TRUE)
-```
-
-
-```{r}
 #| echo: false
 #| warning: false
 #| results: "hide"
@@ -35,14 +28,12 @@ library(reticulate)
 ```{python}
 #| echo: false
 #| label: "ajustar lo del path"
-#| dependson: "reticulate"
 import sys
 sys.path.append("cod/Python")
 ```
 
 ```{python}
 #| label: "carga de librerias"
-#| dependson: "ajustar lo del path"
 # --- Librerías estándar ---
 import os  # Rutas de los archivos
 
@@ -137,23 +128,19 @@ Se considera al modelo ExtraTrees como el más óptimo, dado a su alto score tan
 
 ```{python}
 #| label: "optimizador 1"
-#| dependson: ["carga de librerias", "lectura de la base de datos"]
 optimizador = OptimizadorExtraTreesOptuna(base, "V21", 100)
 ```
 ```{python}
 #| label: "optimizador 2"
-#| dependson: "optimizador 1"
 optimizador.optimizar()
 ```
 ```{python}
 #| label: "optimizador 3"
-#| dependson: "optimizador 2"
 modelo_optimizado = optimizador.entrenar_modelo_final()
 modelo_optimizado
 ```
 ```{python}
 #| label: "optimizador 4"
-#| dependson: "optimizador 3"
 optimizador.evaluar_modelo_final()
 ```
 
@@ -161,11 +148,15 @@ optimizador.evaluar_modelo_final()
 
 ```{python}
 #| label: "importancias de las variables"
-#| dependson: "optimizador 3"
 importancias = modelador.importancia_variables_modelos("ExtraTrees", modelo_optimizado)
 
-importancias["ExtraTrees"].iloc[1:30]
+importancias["ExtraTrees"].iloc[0:30]
 ```
+```{python}
+#| include: false
+importancias["ExtraTrees"].to_excel("res/importancias_variables.xlsx", index = False)
+```
+
 
 
 

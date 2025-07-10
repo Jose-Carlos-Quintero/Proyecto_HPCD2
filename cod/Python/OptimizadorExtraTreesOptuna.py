@@ -13,6 +13,22 @@ class OptimizadorExtraTreesOptuna:
     """
 
     def __init__(self, df: pd.DataFrame, variable_objetivo: str, n_trials: int = 30):
+        """Inicializa una instancia del optimizador de hiperparámetros.
+
+        Parámetros
+        ----------
+        df : pd.DataFrame
+            Conjunto de datos que contiene las variables predictoras y la variable objetivo.
+        variable_objetivo : str
+            Nombre de la variable objetivo dentro del DataFrame.
+        n_trials : int, opcional
+            Número de iteraciones que realizará Optuna durante la búsqueda de hiperparámetros (por defecto es 30).
+        
+        Retorna
+        -------
+        None
+        """
+
         self.__modelador = ModeladorDatos(df, variable_objetivo, modelos = {})
         self.__variable_objetivo = variable_objetivo
         self.__n_trials = n_trials
@@ -21,61 +37,182 @@ class OptimizadorExtraTreesOptuna:
         
     @property
     def modelador(self):
-        """ModeladorDatos: objeto encargado del preprocesamiento y división de datos."""
+        """Retorna el objeto modelador de datos utilizado para preprocesamiento y partición.
+        
+        Parámetros
+        ----------
+        None
+        
+        Retorna
+        -------
+        ModeladorDatos:
+            Objeto encargado del preprocesamiento, partición y transformación de datos.
+        """
         return self.__modelador
 
     @modelador.setter
     def modelador(self, value):
+        """Asigna un nuevo objeto ModeladorDatos como modelador interno.
+        
+        Parámetros
+        ----------
+        value : ModeladorDatos
+            Objeto que debe ser una instancia de ModeladorDatos para reemplazar al actual.
+        
+        Retorna
+        -------
+        None
+        """
+
         if not isinstance(value, ModeladorDatos):
             raise TypeError("El valor debe ser una instancia de ModeladorDatos.")
         self.__modelador = value
 
     @property
     def variable_objetivo(self):
-        """str: Nombre de la variable objetivo."""
+        """Retorna el nombre de la variable objetivo.
+
+        Parámetros
+        ----------
+        None
+        
+        Retorna
+        -------
+        str:
+            Nombre de la variable objetivo.
+        """
+
         return self.__variable_objetivo
 
     @variable_objetivo.setter
-    def variable_objetivo(self, value):
+    def variable_objetivo(self, value: str):
+        """Asigna un nuevo nombre para la variable objetivo.
+
+        Parámetros
+        ----------
+        value : str
+            Nombre de la variable objetivo. Debe ser una cadena de texto.
+        
+        Retorna
+        -------
+        None
+        """
+
         if not isinstance(value, str):
             raise TypeError("El nombre de la variable objetivo debe ser una cadena de texto.")
         self.__variable_objetivo = value
 
     @property
     def n_trials(self):
-        """int: Número de iteraciones de búsqueda de Optuna."""
+        """Retorna el número de iteraciones que se realizarán en la búsqueda de Optuna.
+
+        Parámetros
+        ----------
+        None
+        
+        Retorna
+        -------
+        int:
+            Número de iteraciones de búsqueda de hiperparámetros.
+        """
         return self.__n_trials
 
     @n_trials.setter
     def n_trials(self, value):
+        """Asigna el número de iteraciones para la búsqueda de hiperparámetros con Optuna.
+
+        Parámetros
+        ----------
+        value : int
+            Número entero positivo que indica la cantidad de iteraciones.
+        
+        Retorna
+        -------
+        None
+        """
+
         if not isinstance(value, int) or value <= 0:
             raise ValueError("n_trials debe ser un entero positivo.")
         self.__n_trials = value
 
     @property
     def study(self):
-        """optuna.Study: Estudio de Optuna con los resultados de la optimización."""
+        """Retorna el estudio de Optuna generado tras la optimización.
+
+        Parámetros
+        ----------
+        None
+        
+        Retorna
+        -------
+        optuna.Study:
+            Estudio con los resultados de la búsqueda de hiperparámetros.
+        """
         return self.__study
 
     @study.setter
     def study(self, value):
+        """Asigna un nuevo objeto de estudio de Optuna o None.
+
+        Parámetros
+        ----------
+        value : optuna.Study o None
+            Objeto con los resultados de la optimización, o None si aún no se ha generado.
+        
+        Retorna
+        -------
+        None
+        """
+
         if not isinstance(value, optuna.Study) and value is not None:
             raise TypeError("El valor debe ser un objeto optuna.Study o None.")
         self.__study = value
 
     @property
     def modelo_final(self):
-        """Pipeline: Modelo entrenado con los mejores hiperparámetros."""
+        """Retorna el modelo final entrenado con los mejores hiperparámetros.
+        
+        Parámetros
+        ----------
+        None
+        
+        Retorna
+        -------
+        Pipeline:
+            Modelo completo entrenado, incluyendo preprocesamiento y clasificador.
+        """
         return self.__modelo_final
 
     @modelo_final.setter
     def modelo_final(self, value):
+        """Asigna el modelo final entrenado con los mejores hiperparámetros.
+        
+        Parámetros
+        ----------
+        value : Pipeline o None
+            Objeto de tipo sklearn.Pipeline que representa el modelo final, o None si no se ha definido aún.
+        
+        Retorna
+        -------
+        None
+        """
+
         if not isinstance(value, Pipeline) and value is not None:
             raise TypeError("modelo_final debe ser un sklearn.Pipeline o None.")
         self.__modelo_final = value
         
     def __str__(self):
-        """Representación legible del objeto OptimizadorExtraTreesOptuna."""
+        """Genera una representación legible del objeto OptimizadorExtraTreesOptuna.
+        
+        Parámetros
+        ----------
+        None
+        
+        Retorna
+        -------
+        str:
+            Cadena con un resumen informativo del estado interno del optimizador, incluyendo variable objetivo, número de iteraciones, estado del estudio y modelo, y tamaño del conjunto de entrenamiento.
+        """
         info = [
             "OptimizadorExtraTreesOptuna resumen:",
             f"- Variable objetivo: {self.__variable_objetivo}",
@@ -106,9 +243,10 @@ class OptimizadorExtraTreesOptuna:
             try:
                 n_estimators = trial.suggest_int("n_estimators", 100, 500)
                 # max_depth = trial.suggest_int("max_depth", 5, 40)
-                min_samples_split = trial.suggest_int("min_samples_split", 2, 50)
-                min_samples_leaf = trial.suggest_int("min_samples_leaf", 1, 20)
+                # min_samples_split = trial.suggest_int("min_samples_split", 2, 50)
+                # min_samples_leaf = trial.suggest_int("min_samples_leaf", 1, 20)
                 max_features = trial.suggest_categorical("max_features", ['sqrt', 'log2', 0.3, 0.5, 0.8])
+                criterion = trial.suggest_categorical("criterion", ["gini", "entropy", "log_loss"])
                 # max_leaf_nodes = trial.suggest_int("max_leaf_nodes", 20, 300)
 
                 pipeline = Pipeline(steps = [
@@ -116,11 +254,12 @@ class OptimizadorExtraTreesOptuna:
                     ('classifier', ExtraTreesClassifier(
                         n_estimators = n_estimators,
                         # max_depth = max_depth,
-                        min_samples_split = min_samples_split,
-                        min_samples_leaf = min_samples_leaf,
+                        # min_samples_split = min_samples_split,
+                        # min_samples_leaf = min_samples_leaf,
                         max_features = max_features,
                         # max_leaf_nodes = max_leaf_nodes,
-                        bootstrap = False,
+                        criterion = criterion,
+                        
                         random_state = 42,
                         n_jobs = -1
                     ))
@@ -156,9 +295,17 @@ class OptimizadorExtraTreesOptuna:
         return f"Parámetros: {self.__study.best_params}\nScore: {self.__study.best_value}"
 
     def entrenar_modelo_final(self):
-        """Entrena el modelo ExtraTrees con los mejores hiperparámetros encontrados.
+        """Entrena el modelo ExtraTreesClassifier con los mejores hiperparámetros encontrados por Optuna
+        Parámetros
+        ----------
+        None
         
+        Retorna
+        -------
+        Pipeline:
+            Objeto sklearn.Pipeline que contiene el preprocesador y el clasificador entrenado con los mejores hiperparámetros.
         """
+
 
         best_params = self.__study.best_params
 
@@ -167,10 +314,11 @@ class OptimizadorExtraTreesOptuna:
             ('classifier', ExtraTreesClassifier(
                 n_estimators=best_params['n_estimators'],
                 # max_depth=best_params['max_depth'],
-                min_samples_split=best_params['min_samples_split'],
-                min_samples_leaf=best_params['min_samples_leaf'],
-                max_features=best_params['max_features'],
+                # min_samples_split=best_params['min_samples_split'],
+                # min_samples_leaf=best_params['min_samples_leaf'],
+                max_features = best_params['max_features'],
                 # max_leaf_nodes=best_params['max_leaf_nodes'],
+                criterion = best_params['criterion'],
                 random_state = 42,
                 n_jobs = -1
             ))
@@ -180,7 +328,7 @@ class OptimizadorExtraTreesOptuna:
         
         return self.__modelo_final
 
-    def evaluar_modelo_final(self, ruta_salida: str = "Resultado_modelo_optuna.xlsx") -> pd.DataFrame:
+    def evaluar_modelo_final(self, ruta_salida: str = "res/Resultado_modelo_optuna.xlsx") -> pd.DataFrame:
         """
         Evalúa el modelo entrenado para distintos umbrales de clasificación y guarda resultados en Excel.
 
@@ -191,7 +339,7 @@ class OptimizadorExtraTreesOptuna:
 
         Retorna
         -------
-        df_resultaados: pd.DataFrame
+        df_resultados: pd.DataFrame
             DataFrame con métricas para distintos umbrales.
         """
 

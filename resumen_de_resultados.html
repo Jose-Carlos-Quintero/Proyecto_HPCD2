@@ -3199,22 +3199,22 @@ vertical-align: -.125em;
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(results_df.loc[:,[<span class="st">&quot;Model&quot;</span>, <span class="st">&quot;Precision&quot;</span>, <span class="st">&quot;Recall&quot;</span>, <span class="st">&quot;F1 Score&quot;</span>]])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>                 Model  Precision    Recall  F1 Score
-0   LogisticRegression   0.623693  0.331891  0.433239
-1         DecisionTree   0.729141  0.745365  0.737164
-2                  SVM   0.728205  0.351051  0.473728
-3         RandomForest   0.936452  0.655748  0.771356
-4              XGBoost   0.829331  0.597651  0.694684
-5                  KNN   0.751703  0.613721  0.675740
-6        NeuralNetwork   0.677670  0.647095  0.662030
-7                  LDA   0.586451  0.358467  0.444956
-8             CatBoost   0.806968  0.529666  0.639552
-9             LightGBM   0.772349  0.459209  0.575969
-10            AdaBoost   0.638756  0.330037  0.435208
-11    GradientBoosting   0.677124  0.320148  0.434746
-12          NaiveBayes   0.345929  0.769468  0.477286
-13                 QDA   0.323024  0.348578  0.335315
-14             Bagging   0.882027  0.688504  0.773343
-15          ExtraTrees   0.936069  0.733004  0.822184</code></pre>
+0   LogisticRegression   0.633554  0.347879  0.449139
+1         DecisionTree   0.739080  0.779394  0.758702
+2                  SVM   0.736397  0.369091  0.491724
+3         RandomForest   0.925957  0.659394  0.770265
+4              XGBoost   0.795219  0.604848  0.687091
+5                  KNN   0.757174  0.623636  0.683948
+6        NeuralNetwork   0.650203  0.678182  0.663898
+7                  LDA   0.607823  0.367273  0.457877
+8             CatBoost   0.797683  0.542424  0.645743
+9             LightGBM   0.757396  0.465455  0.576577
+10            AdaBoost   0.636971  0.346667  0.448980
+11    GradientBoosting   0.669127  0.329697  0.441738
+12          NaiveBayes   0.341707  0.766667  0.472720
+13                 QDA   0.327666  0.689091  0.444141
+14             Bagging   0.896965  0.680606  0.773949
+15          ExtraTrees   0.934734  0.755152  0.835401</code></pre>
 </div>
 </div>
 <p>Se considera al modelo ExtraTrees como el más óptimo, dado a su alto score tanto en precisión como en recall, por lo que se va a utilizar para la optimización de parámetros.</p>
@@ -3229,9 +3229,9 @@ vertical-align: -.125em;
 <div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>optimizador.optimizar()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Mejores hiperparámetros encontrados:
-{&#39;n_estimators&#39;: 213, &#39;min_samples_split&#39;: 2, &#39;min_samples_leaf&#39;: 1, &#39;max_features&#39;: 0.3}
-Mejor F1 (macro): 0.7558544579566905
-&quot;Parámetros: {&#39;n_estimators&#39;: 213, &#39;min_samples_split&#39;: 2, &#39;min_samples_leaf&#39;: 1, &#39;max_features&#39;: 0.3}\nScore: 0.7558544579566905&quot;</code></pre>
+{&#39;n_estimators&#39;: 485, &#39;max_features&#39;: 0.3, &#39;criterion&#39;: &#39;entropy&#39;}
+Mejor F1 (macro): 0.7690012924913529
+&quot;Parámetros: {&#39;n_estimators&#39;: 485, &#39;max_features&#39;: 0.3, &#39;criterion&#39;: &#39;entropy&#39;}\nScore: 0.7690012924913529&quot;</code></pre>
 </div>
 </div>
 <div class="cell">
@@ -3256,8 +3256,9 @@ Mejor F1 (macro): 0.7558544579566905
                                                    &#39;CondMig&#39;, &#39;NivInst&#39;, ...])],
                                    verbose_feature_names_out=False)),
                 (&#39;classifier&#39;,
-                 ExtraTreesClassifier(max_features=0.3, n_estimators=213,
-                                      n_jobs=-1, random_state=42))])</pre><b>In a Jupyter environment, please rerun this cell to show the HTML representation or trust the notebook. <br>On GitHub, the HTML representation is unable to render, please try loading this page with nbviewer.org.</b></div><div class="sk-container" hidden><div class="sk-item sk-dashed-wrapped"><div class="sk-label-container"><div class="sk-label sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-1" type="checkbox"><label for="sk-estimator-id-1" class="sk-toggleable__label sk-toggleable__label-arrow">Pipeline</label><div class="sk-toggleable__content"><pre>Pipeline(steps=[(&#39;preprocessor&#39;,
+                 ExtraTreesClassifier(criterion=&#39;entropy&#39;, max_features=0.3,
+                                      n_estimators=485, n_jobs=-1,
+                                      random_state=42))])</pre><b>In a Jupyter environment, please rerun this cell to show the HTML representation or trust the notebook. <br>On GitHub, the HTML representation is unable to render, please try loading this page with nbviewer.org.</b></div><div class="sk-container" hidden><div class="sk-item sk-dashed-wrapped"><div class="sk-label-container"><div class="sk-label sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-1" type="checkbox"><label for="sk-estimator-id-1" class="sk-toggleable__label sk-toggleable__label-arrow">Pipeline</label><div class="sk-toggleable__content"><pre>Pipeline(steps=[(&#39;preprocessor&#39;,
                  ColumnTransformer(remainder=&#39;passthrough&#39;,
                                    transformers=[(&#39;num&#39;, StandardScaler(),
                                                   [&#39;ithb&#39;]),
@@ -3275,8 +3276,9 @@ Mejor F1 (macro): 0.7558544579566905
                                                    &#39;CondMig&#39;, &#39;NivInst&#39;, ...])],
                                    verbose_feature_names_out=False)),
                 (&#39;classifier&#39;,
-                 ExtraTreesClassifier(max_features=0.3, n_estimators=213,
-                                      n_jobs=-1, random_state=42))])</pre></div></div></div><div class="sk-serial"><div class="sk-item sk-dashed-wrapped"><div class="sk-label-container"><div class="sk-label sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-2" type="checkbox"><label for="sk-estimator-id-2" class="sk-toggleable__label sk-toggleable__label-arrow">preprocessor: ColumnTransformer</label><div class="sk-toggleable__content"><pre>ColumnTransformer(remainder=&#39;passthrough&#39;,
+                 ExtraTreesClassifier(criterion=&#39;entropy&#39;, max_features=0.3,
+                                      n_estimators=485, n_jobs=-1,
+                                      random_state=42))])</pre></div></div></div><div class="sk-serial"><div class="sk-item sk-dashed-wrapped"><div class="sk-label-container"><div class="sk-label sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-2" type="checkbox"><label for="sk-estimator-id-2" class="sk-toggleable__label sk-toggleable__label-arrow">preprocessor: ColumnTransformer</label><div class="sk-toggleable__content"><pre>ColumnTransformer(remainder=&#39;passthrough&#39;,
                   transformers=[(&#39;num&#39;, StandardScaler(), [&#39;ithb&#39;]),
                                 (&#39;cat&#39;,
                                  OneHotEncoder(handle_unknown=&#39;ignore&#39;,
@@ -3287,25 +3289,25 @@ Mejor F1 (macro): 0.7558544579566905
                                   &#39;V18J&#39;, &#39;V18K&#39;, &#39;V18L&#39;, &#39;V18M&#39;, &#39;V22&#39;, &#39;V19&#39;,
                                   &#39;R4A&#39;, &#39;TamViv&#39;, &#39;A4&#39;, &#39;A5&#39;, &#39;A6&#39;, &#39;CondMig&#39;,
                                   &#39;NivInst&#39;, ...])],
-                  verbose_feature_names_out=False)</pre></div></div></div><div class="sk-parallel"><div class="sk-parallel-item"><div class="sk-item"><div class="sk-label-container"><div class="sk-label sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-3" type="checkbox"><label for="sk-estimator-id-3" class="sk-toggleable__label sk-toggleable__label-arrow">num</label><div class="sk-toggleable__content"><pre>[&#39;ithb&#39;]</pre></div></div></div><div class="sk-serial"><div class="sk-item"><div class="sk-estimator sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-4" type="checkbox"><label for="sk-estimator-id-4" class="sk-toggleable__label sk-toggleable__label-arrow">StandardScaler</label><div class="sk-toggleable__content"><pre>StandardScaler()</pre></div></div></div></div></div></div><div class="sk-parallel-item"><div class="sk-item"><div class="sk-label-container"><div class="sk-label sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-5" type="checkbox"><label for="sk-estimator-id-5" class="sk-toggleable__label sk-toggleable__label-arrow">cat</label><div class="sk-toggleable__content"><pre>[&#39;ZONA&#39;, &#39;REGION&#39;, &#39;V1&#39;, &#39;V3&#39;, &#39;V5&#39;, &#39;V6&#39;, &#39;EFI&#39;, &#39;V8&#39;, &#39;V12&#39;, &#39;V14A1&#39;, &#39;V15&#39;, &#39;V16&#39;, &#39;V18E&#39;, &#39;V18F&#39;, &#39;V18G&#39;, &#39;V18Q&#39;, &#39;V18I&#39;, &#39;V18J&#39;, &#39;V18K&#39;, &#39;V18L&#39;, &#39;V18M&#39;, &#39;V22&#39;, &#39;V19&#39;, &#39;R4A&#39;, &#39;TamViv&#39;, &#39;A4&#39;, &#39;A5&#39;, &#39;A6&#39;, &#39;CondMig&#39;, &#39;NivInst&#39;, &#39;A22A&#39;]</pre></div></div></div><div class="sk-serial"><div class="sk-item"><div class="sk-estimator sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-6" type="checkbox"><label for="sk-estimator-id-6" class="sk-toggleable__label sk-toggleable__label-arrow">OneHotEncoder</label><div class="sk-toggleable__content"><pre>OneHotEncoder(handle_unknown=&#39;ignore&#39;, sparse_output=False)</pre></div></div></div></div></div></div><div class="sk-parallel-item"><div class="sk-item"><div class="sk-label-container"><div class="sk-label sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-7" type="checkbox"><label for="sk-estimator-id-7" class="sk-toggleable__label sk-toggleable__label-arrow">remainder</label><div class="sk-toggleable__content"><pre>[]</pre></div></div></div><div class="sk-serial"><div class="sk-item"><div class="sk-estimator sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-8" type="checkbox"><label for="sk-estimator-id-8" class="sk-toggleable__label sk-toggleable__label-arrow">passthrough</label><div class="sk-toggleable__content"><pre>passthrough</pre></div></div></div></div></div></div></div></div><div class="sk-item"><div class="sk-estimator sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-9" type="checkbox"><label for="sk-estimator-id-9" class="sk-toggleable__label sk-toggleable__label-arrow">ExtraTreesClassifier</label><div class="sk-toggleable__content"><pre>ExtraTreesClassifier(max_features=0.3, n_estimators=213, n_jobs=-1,
-                     random_state=42)</pre></div></div></div></div></div></div></div>
+                  verbose_feature_names_out=False)</pre></div></div></div><div class="sk-parallel"><div class="sk-parallel-item"><div class="sk-item"><div class="sk-label-container"><div class="sk-label sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-3" type="checkbox"><label for="sk-estimator-id-3" class="sk-toggleable__label sk-toggleable__label-arrow">num</label><div class="sk-toggleable__content"><pre>[&#39;ithb&#39;]</pre></div></div></div><div class="sk-serial"><div class="sk-item"><div class="sk-estimator sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-4" type="checkbox"><label for="sk-estimator-id-4" class="sk-toggleable__label sk-toggleable__label-arrow">StandardScaler</label><div class="sk-toggleable__content"><pre>StandardScaler()</pre></div></div></div></div></div></div><div class="sk-parallel-item"><div class="sk-item"><div class="sk-label-container"><div class="sk-label sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-5" type="checkbox"><label for="sk-estimator-id-5" class="sk-toggleable__label sk-toggleable__label-arrow">cat</label><div class="sk-toggleable__content"><pre>[&#39;ZONA&#39;, &#39;REGION&#39;, &#39;V1&#39;, &#39;V3&#39;, &#39;V5&#39;, &#39;V6&#39;, &#39;EFI&#39;, &#39;V8&#39;, &#39;V12&#39;, &#39;V14A1&#39;, &#39;V15&#39;, &#39;V16&#39;, &#39;V18E&#39;, &#39;V18F&#39;, &#39;V18G&#39;, &#39;V18Q&#39;, &#39;V18I&#39;, &#39;V18J&#39;, &#39;V18K&#39;, &#39;V18L&#39;, &#39;V18M&#39;, &#39;V22&#39;, &#39;V19&#39;, &#39;R4A&#39;, &#39;TamViv&#39;, &#39;A4&#39;, &#39;A5&#39;, &#39;A6&#39;, &#39;CondMig&#39;, &#39;NivInst&#39;, &#39;A22A&#39;]</pre></div></div></div><div class="sk-serial"><div class="sk-item"><div class="sk-estimator sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-6" type="checkbox"><label for="sk-estimator-id-6" class="sk-toggleable__label sk-toggleable__label-arrow">OneHotEncoder</label><div class="sk-toggleable__content"><pre>OneHotEncoder(handle_unknown=&#39;ignore&#39;, sparse_output=False)</pre></div></div></div></div></div></div><div class="sk-parallel-item"><div class="sk-item"><div class="sk-label-container"><div class="sk-label sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-7" type="checkbox"><label for="sk-estimator-id-7" class="sk-toggleable__label sk-toggleable__label-arrow">remainder</label><div class="sk-toggleable__content"><pre>[]</pre></div></div></div><div class="sk-serial"><div class="sk-item"><div class="sk-estimator sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-8" type="checkbox"><label for="sk-estimator-id-8" class="sk-toggleable__label sk-toggleable__label-arrow">passthrough</label><div class="sk-toggleable__content"><pre>passthrough</pre></div></div></div></div></div></div></div></div><div class="sk-item"><div class="sk-estimator sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-9" type="checkbox"><label for="sk-estimator-id-9" class="sk-toggleable__label sk-toggleable__label-arrow">ExtraTreesClassifier</label><div class="sk-toggleable__content"><pre>ExtraTreesClassifier(criterion=&#39;entropy&#39;, max_features=0.3, n_estimators=485,
+                     n_jobs=-1, random_state=42)</pre></div></div></div></div></div></div></div>
 </div>
 </div>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>optimizador.evaluar_modelo_final()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>    Accuracy  Precisión    Recall        F1
-0   0.196502   0.196502  1.000000  0.328461
-1   0.783702   0.475650  0.983931  0.641289
-2   0.892883   0.658076  0.946848  0.776483
-3   0.929075   0.776767  0.896786  0.832473
-4   0.943405   0.868286  0.839308  0.853551
-5   0.940734   0.912409  0.772559  0.836680
-6   0.935390   0.960951  0.699629  0.809728
-7   0.918387   0.983640  0.594561  0.741140
-8   0.898105   0.994917  0.483931  0.651143
-9   0.862764   0.997959  0.302225  0.463947
-10  0.809570   1.000000  0.030902  0.059952</code></pre>
+0   0.200389   0.200389  1.000000  0.333873
+1   0.788195   0.485886  0.980606  0.649799
+2   0.897134   0.671215  0.953939  0.787985
+3   0.933932   0.788321  0.916364  0.847534
+4   0.947535   0.870438  0.867273  0.868852
+5   0.949478   0.926694  0.812121  0.865633
+6   0.939033   0.961415  0.724848  0.826538
+7   0.921909   0.982742  0.621212  0.761233
+8   0.897741   0.992683  0.493333  0.659109
+9   0.859121   0.997967  0.297576  0.458450
+10  0.804348   1.000000  0.023636  0.046181</code></pre>
 </div>
 </div>
 </section>
@@ -3316,38 +3318,39 @@ Mejor F1 (macro): 0.7558544579566905
 <div class="cell-output cell-output-stdout">
 <pre><code>Evaluando importancia para ExtraTrees...</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>importancias[<span class="st">&quot;ExtraTrees&quot;</span>].iloc[<span class="dv">1</span>:<span class="dv">30</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>importancias[<span class="st">&quot;ExtraTrees&quot;</span>].iloc[<span class="dv">0</span>:<span class="dv">30</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>                   Variable  Importancia
-0                      ithb     0.033049
-71               TamViv_4.0     0.016832
-70               TamViv_3.0     0.016188
-27                   V8_3.0     0.016095
-12      V3_Block o ladrillo     0.016081
-4            REGION_Central     0.016066
-26                   V8_2.0     0.015660
-2               ZONA_Urbana     0.015632
-1                ZONA_Rural     0.015277
-67                   R4A_Sí     0.014910
-69               TamViv_2.0     0.014562
-66                   R4A_No     0.014484
-22                EFI_Bueno     0.014393
-53                  V18I_Sí     0.014296
-52                  V18I_No     0.014236
-24              EFI_Regular     0.014104
-63                   V22_Sí     0.013838
-38           V15_De la CNFL     0.013749
-62                   V22_No     0.013644
-30  V12_Acueducto del A y A     0.013619
-32      V12_Acueducto rural     0.013588
-42                  V16_Gas     0.013033
-72               TamViv_5.0     0.012854
-46                  V18F_No     0.012582
-47                  V18F_Sí     0.012425
-41         V16_Electricidad     0.012179
-54                  V18J_No     0.012139
-55                  V18J_Sí     0.011671
-56                  V18K_No     0.011603</code></pre>
+15          V3_Prefabricado     0.069261
+0                      ithb     0.032258
+38           V15_De la CNFL     0.022078
+12      V3_Block o ladrillo     0.018339
+4            REGION_Central     0.016906
+71               TamViv_4.0     0.016600
+70               TamViv_3.0     0.016055
+69               TamViv_2.0     0.015554
+27                   V8_3.0     0.015520
+26                   V8_2.0     0.015382
+67                   R4A_Sí     0.014519
+66                   R4A_No     0.014454
+22                EFI_Bueno     0.014317
+53                  V18I_Sí     0.014280
+24              EFI_Regular     0.014196
+52                  V18I_No     0.014164
+63                   V22_Sí     0.013805
+62                   V22_No     0.013746
+1                ZONA_Rural     0.013676
+30  V12_Acueducto del A y A     0.013146
+42                  V16_Gas     0.012993
+41         V16_Electricidad     0.012800
+72               TamViv_5.0     0.012759
+2               ZONA_Urbana     0.012759
+32      V12_Acueducto rural     0.012700
+46                  V18F_No     0.012664
+47                  V18F_Sí     0.012553
+34                V14A1_1.0     0.012432
+54                  V18J_No     0.012315
+55                  V18J_Sí     0.012238</code></pre>
 </div>
 </div>
 </section>

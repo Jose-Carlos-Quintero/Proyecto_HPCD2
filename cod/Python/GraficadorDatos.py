@@ -65,7 +65,7 @@ class GraficadorDatos:
                 f"y {self.__df.shape[1]} columnas.")
 
 
-    def grafico_frecuencia_con_bono(self, columna, titulo=None):
+    def grafico_frecuencia_con_bono(self, columna, titulo = None):
         """
         Genera un gráfico de barras horizontales donde cada barra representa el porcentaje de observaciones
         en una categoría específica, y se anota el porcentaje de hogares con bono de vivienda (V21 = 1) dentro de cada categoría.
@@ -88,7 +88,7 @@ class GraficadorDatos:
         total = len(df)
     
         # % de personas en cada categoría respecto al total (longitud de la barra)
-        freq_relativa = df[columna].value_counts(normalize=True).sort_index() * 100
+        freq_relativa = df[columna].value_counts(normalize = True).sort_index() * 100
     
         # % con bono (V21=1) dentro de cada categoría (etiqueta a mostrar)
         bono_por_categoria = (
@@ -102,9 +102,9 @@ class GraficadorDatos:
     
         # Plot
         plt.figure(figsize=(8, 5))
-        sns.barplot(x=freq_relativa.values, y=freq_relativa.index, palette='viridis')
+        sns.barplot(x = freq_relativa.values, y = freq_relativa.index, palette  =  'viridis')
         for i, (cat, v) in enumerate(bono_por_categoria.items()):
-            plt.text(freq_relativa[cat] + 0.5, i, f"{v:.1f}%", va='center')
+            plt.text(freq_relativa[cat] + 0.5, i, f"{v:.1f}%", va = 'center')
     
         plt.title(titulo or f"Distribución de {columna} y % con bono (V21)")
         plt.xlabel("Porcentaje del total")
@@ -137,12 +137,12 @@ class GraficadorDatos:
             filtro = (grupo['ithb'] >= q1 - 1.5 * iqr) & (grupo['ithb'] <= q3 + 1.5 * iqr)
             return grupo[filtro]
     
-        df_filtrado = df_filtrado.groupby(variable_categorica, group_keys=False).apply(quitar_outliers)
+        df_filtrado = df_filtrado.groupby(variable_categorica, group_keys = False).apply(quitar_outliers)
     
         # Graficar sin valores extremos
-        plt.figure(figsize=(8, 5))
-        sns.boxplot(data=df_filtrado, x=variable_categorica, y='ithb', palette='Set2')
-        plt.xticks(rotation=45)
+        plt.figure(figsize = (8, 5))
+        sns.boxplot(data = df_filtrado, x = variable_categorica, y = 'ithb', palette = 'Set2')
+        plt.xticks(rotation = 45)
         plt.title(f"Ingreso por {variable_categorica} (sin outliers)")
         plt.tight_layout()
         plt.show()
