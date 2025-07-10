@@ -119,7 +119,7 @@ class ModeladorDatos():
         )
     
     #Métodos de clase
-    def evaluar_modelos(self, ruta_excel: str = 'res/resultados_modelos.xlsx'):
+    def evaluar_modelos(self, ruta_excel: str = '../../res/resultados_modelos.xlsx'):
         """Entrena y evalúa múltiples modelos de clasificación utilizando métricas estándar.
 
         Parámetros

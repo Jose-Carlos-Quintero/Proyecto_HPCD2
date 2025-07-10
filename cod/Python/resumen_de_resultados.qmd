@@ -25,12 +25,6 @@ library(reticulate)
 ```
 
 # Carga de módulos
-```{python}
-#| echo: false
-#| label: "ajustar lo del path"
-import sys
-sys.path.append("cod/Python")
-```
 
 ```{python}
 #| label: "carga de librerias"
@@ -72,6 +66,7 @@ import optuna
 from ModeladorDatos import ModeladorDatos
 from ImportadorDatos import ImportadorDatos
 from OptimizadorExtraTreesOptuna import OptimizadorExtraTreesOptuna
+from GraficadorDatos import GraficadorDatos
 ```
 # Lectura de datos
 
@@ -80,7 +75,7 @@ Note que la limpieza y transformación de los datos se efectuó en el script "ma
 ```{python}
 #| label: "lectura de la base de datos"
 ruta_actual = os.getcwd()
-ruta_datos = os.path.join(ruta_actual, 'data/base.csv') 
+ruta_datos = os.path.join(ruta_actual, '../../data/base.csv') 
 ruta_normalizada = os.path.normpath(ruta_datos) 
 base = pd.read_csv(ruta_normalizada)
 ```
@@ -154,7 +149,22 @@ importancias["ExtraTrees"].iloc[0:30]
 ```
 ```{python}
 #| include: false
-importancias["ExtraTrees"].to_excel("res/importancias_variables.xlsx", index = False)
+importancias["ExtraTrees"].to_excel("../../res/importancias_variables.xlsx", index = False)
+```
+
+# Graficos
+
+```{python}
+vis = GraficadorDatos(base)
+```
+```{python}
+vis.grafico_frecuencia_con_bono('V3', "Distribución del material de las paredes (V3) y % con bono")
+vis.grafico_frecuencia_con_bono('V15', "Distribución de la fuente de energía (V15) y % con bono")
+vis.grafico_frecuencia_con_bono('REGION', "Distribución de la región y % con bono")
+vis.grafico_frecuencia_con_bono('TamViv', "Distribución del número de integrantes (TamViv) y % con bono")
+vis.grafico_frecuencia_con_bono('R4A', "Distribución de la jefatura compartida (R4A) y % con bono")
+
+vis.grafico_caja_ingreso("V22", "Distribución del ingreso según si se recibió o no el bono de vivienda (V22)")
 ```
 
 

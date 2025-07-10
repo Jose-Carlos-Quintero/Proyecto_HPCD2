@@ -1,4 +1,5 @@
 import matplotlib.pyplot as plt
+import matplotlib.ticker as mtick
 import seaborn as sns
 
 class GraficadorDatos:
@@ -15,7 +16,7 @@ class GraficadorDatos:
         -------
         None
         """
-        self.df = df.copy()
+        self.__df = df.copy()
         
     @property
     def df(self):
@@ -30,7 +31,7 @@ class GraficadorDatos:
         -------
         pd.DataFrame
         """
-        return self.__df
+        return self.____df
 
     @df.setter
     def df(self, nuevo_df):
@@ -61,59 +62,65 @@ class GraficadorDatos:
         str
             Cadena con el número de filas y columnas del DataFrame.
         """
-        return (f"ImportadorDatos desde '{self.__ruta}' con {self.__df.shape[0]} filas "
+        return (f"ImportadorDatos desde '{self.____ruta}' con {self.__df.shape[0]} filas "
                 f"y {self.__df.shape[1]} columnas.")
 
 
     def grafico_frecuencia_con_bono(self, columna, titulo = None):
         """
-        Genera un gráfico de barras horizontales donde cada barra representa el porcentaje de observaciones
-        en una categoría específica, y se anota el porcentaje de hogares con bono de vivienda (V21 = 1) dentro de cada categoría.
-
+        Genera un gráfico de barras horizontales donde cada barra representa 
+        la cantidad (en miles) de observaciones en una categoría específica, y se anota 
+        el porcentaje de hogares con bono de vivienda (V21 = 1) dentro de cada categoría.
+    
         Parámetros
         ----------
         columna : str
             Nombre de la variable categórica a graficar.
         titulo : str, optional
             Título personalizado del gráfico. Si no se proporciona, se genera automáticamente.
-
+    
         Retorna
         -------
         None
         """
-        df = self.df.copy()
+        df = self.__df.copy()
         df['V21'] = df['V21'].astype(str)
     
-        # Total de observaciones
-        total = len(df)
+        # Frecuencia absoluta ordenada de mayor a menor
+        freq_absoluta = df[columna].value_counts().sort_values(ascending = False)
     
-        # % de personas en cada categoría respecto al total (longitud de la barra)
-        freq_relativa = df[columna].value_counts(normalize = True).sort_index() * 100
-    
-        # % con bono (V21=1) dentro de cada categoría (etiqueta a mostrar)
+        # Porcentaje con bono por categoría
         bono_por_categoria = (
             df[df['V21'] == "1"]
             .groupby(columna)
             .size()
             .div(df.groupby(columna).size())
-            .fillna(0)
-            .sort_index() * 100
+            .fillna(0) * 100
         )
     
-        # Plot
-        plt.figure(figsize=(8, 5))
-        sns.barplot(x = freq_relativa.values, y = freq_relativa.index, palette  =  'viridis')
-        for i, (cat, v) in enumerate(bono_por_categoria.items()):
-            plt.text(freq_relativa[cat] + 0.5, i, f"{v:.1f}%", va = 'center')
+        bono_por_categoria = bono_por_categoria.reindex(freq_absoluta.index)
     
-        plt.title(titulo or f"Distribución de {columna} y % con bono (V21)")
-        plt.xlabel("Porcentaje del total")
-        plt.ylabel(columna)
-        plt.xlim(0, 100)
+        # Dividir los valores por 1000 para que el gráfico muestre miles
+        valores_miles = freq_absoluta / 1000
+    
+        plt.figure(figsize = (10, 5))
+        sns.barplot(x = valores_miles.values, y = valores_miles.index, palette = 'viridis')
+    
+        for i, (cat, v) in enumerate(bono_por_categoria.items()):
+            plt.text(valores_miles[cat] + 0.1, i, f"{v:.1f}%", va = 'center', fontsize = 20)
+    
+        plt.title(titulo or f"Distribución de {columna} y % con bono (V21)", fontsize = 20)
+        plt.xlabel("Cantidad de observaciones (en miles)", fontsize = 20)
+        plt.ylabel(columna, fontsize = 20)
+        plt.xticks(fontsize = 20)
+        plt.yticks(fontsize = 20)
         plt.tight_layout()
+        # plt.subplots_adjust(left=0.5)
+        plt.xlim(0, valores_miles.max() * 1.1)
         plt.show()
 
-    def grafico_caja_ingreso(self, variable_categorica):
+
+    def grafico_caja_ingreso(self, variable_categorica: str, titulo: str = None):
         """
         Genera un gráfico de caja (boxplot) del ingreso (columna `ithb`) para cada categoría de la variable especificada,
         excluyendo valores extremos (outliers) mediante la regla de Tukey (±1.5·IQR).
@@ -127,7 +134,9 @@ class GraficadorDatos:
         -------
         None
         """
-        df_filtrado = self.df.copy()
+        df_filtrado = self.__df.copy()
+        df_filtrado["ithb"] = df_filtrado["ithb"] / 1_000_000
+
     
         # Calcular los cuartiles y IQR por categoría
         def quitar_outliers(grupo):
@@ -140,10 +149,23 @@ class GraficadorDatos:
         df_filtrado = df_filtrado.groupby(variable_categorica, group_keys = False).apply(quitar_outliers)
     
         # Graficar sin valores extremos
-        plt.figure(figsize = (8, 5))
-        sns.boxplot(data = df_filtrado, x = variable_categorica, y = 'ithb', palette = 'Set2')
-        plt.xticks(rotation = 45)
-        plt.title(f"Ingreso por {variable_categorica} (sin outliers)")
+        plt.figure(figsize = (10, 5))
+        sns.boxplot(
+            data = df_filtrado,
+            y = variable_categorica,
+            x = 'ithb',
+            palette = "viridis",
+            boxprops = dict(edgecolor = 'black'),
+            whiskerprops = dict(color = 'black'),
+            capprops = dict(color = 'black'),
+            medianprops = dict(color = 'black'),
+            flierprops = dict(markerfacecolor = 'gray', markeredgecolor = 'black')
+        )
+        plt.xlabel("Ingreso total del hogar bruto (millones de colones)", fontsize = 20)
+        plt.ylabel(variable_categorica, fontsize = 20)
+        plt.title(titulo or f"Ingreso por {variable_categorica} (sin outliers)", fontsize = 20)
+        plt.xticks(fontsize = 20)
+        plt.yticks(fontsize = 20)
         plt.tight_layout()
         plt.show()
 

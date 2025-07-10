@@ -44,6 +44,7 @@ enaho.eliminar_columnas("V2A") #no tiene sentido incluirla, muy obvio
 
 enaho.resumen_categoria("V3")
 enaho.refactorizar_variable("V3", {
+    "Zócalo (con madera, zinc o fibrocemento)" : "Zócalo",
     "Fibrocemento (Fibrolit, Ricalit)": "Otro",
     "Zinc": "Otro",
     "Material de desecho": "Otro",
@@ -105,11 +106,12 @@ enaho.eliminar_columnas("V14B") # Variable muy desbalanceada
 
 enaho.resumen_categoria("V15")
 enaho.refactorizar_variable("V15", {
-    "De la ESPH / JASEC": "Otra fuente o sin electricidad",
-    "No hay luz eléctrica": "Otra fuente o sin electricidad",
-    "Otra fuente de energía": "Otra fuente o sin electricidad",
-    "De planta privada": "Otra fuente o sin electricidad"
+    "De la ESPH / JASEC": "Otro o no tiene",
+    "No hay luz eléctrica": "Otro o no tiene",
+    "Otra fuente de energía": "Otro o no tiene",
+    "De planta privada": "Otro o no tiene"
 })
+
 
 enaho.resumen_categoria("V16")
 enaho.refactorizar_variable("V16", {

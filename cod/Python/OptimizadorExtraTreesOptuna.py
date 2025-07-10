@@ -328,7 +328,7 @@ class OptimizadorExtraTreesOptuna:
         
         return self.__modelo_final
 
-    def evaluar_modelo_final(self, ruta_salida: str = "res/Resultado_modelo_optuna.xlsx") -> pd.DataFrame:
+    def evaluar_modelo_final(self, ruta_salida: str = "../../res/Resultado_modelo_optuna.xlsx") -> pd.DataFrame:
         """
         Evalúa el modelo entrenado para distintos umbrales de clasificación y guarda resultados en Excel.
 
