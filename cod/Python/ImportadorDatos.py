@@ -323,6 +323,7 @@ class ImportadorDatos:
         }).astype("int")
     
         return self.__datos
+            
       
     def generar_csv(self):
         """método para guardar la base de datos en formato csv

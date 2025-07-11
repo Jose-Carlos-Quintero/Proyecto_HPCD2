@@ -64,6 +64,26 @@ class GraficadorDatos:
         """
         return (f"ImportadorDatos desde '{self.____ruta}' con {self.__df.shape[0]} filas "
                 f"y {self.__df.shape[1]} columnas.")
+    
+    def codificar_binaria_a_categorica(self, columna: str):
+        """
+        Codifica una variable binaria reemplazando los valores 0 y 1 por si y no respectivamente
+
+        Parámetros
+        ----------
+        columna : str
+            Nombre de la columna a recodificar
+
+        Retorna
+        -------
+        pd.DataFrame
+            DataFrame con la variable recodificada con si/no
+        """
+        self.__df[columna] = self.__df[columna].replace({
+           1: "Sí",
+           0: "No"
+           }).astype("category")
+        return self.__df
 
 
     def grafico_frecuencia_con_bono(self, columna, titulo = None):
