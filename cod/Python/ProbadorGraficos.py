@@ -1,5 +1,6 @@
 from GraficadorDatos import GraficadorDatos
 import pandas as pd
+import matplotlib.pyplot as plt
 
 base=pd.read_csv("../../data/base.csv")
 vis = GraficadorDatos(base)
